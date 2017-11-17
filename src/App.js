@@ -1,35 +1,43 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import logo from './logo.svg';
+import Fact from './Fact';
 import './App.css';
-import $ from 'jquery';
+import { Header } from 'semantic-ui-react'
 
 const propTypes = {
-  fact_source: PropTypes.string.isRequired, 
+  day: PropTypes.string.isRequired,
+  month: PropTypes.string.isRequired, 
+  year: PropTypes.string.isRequired, 
 };
+
 
 class App extends Component {
 
-  // constructor(props) {
-  //     super(props);
-      // this.getColorClass= this.getColorClass.bind(this);
-      // this.toggleAnimation = this.toggleAnimation.bind(this);
-
-  // }
+  constructor(props) {
+      super(props);
+      this.fact_source = ""
+      this.fetchFact = this.fetchFact.bind(this);
+  } 
 
   componentWillMount () {
-    const fact = this.props.fact_source
-    $(function() {
-      $.get(fact, function(data) {
-        $('#number').text(data);
-      });
-    });
+    this.fetchFact()
+  }
+
+  fetchFact() {
+    this.fact_source = "http://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date";
   }
 
   render() {
+    const months = ["January", "February", "March", "April", "May", "June", "July", 
+      "August", "September", "October", "November", "December"]
+
     return (
-      <div className="fact">
-        <span id="number"></span>
+      <div className="app">
+        <Header as='h2'>{months[this.props.month-1]} {this.props.day}, {this.props.year}</Header>
+        <Fact 
+          fact_source={this.fact_source} 
+          on_refresh={this.fetchFact}
+        />
       </div>
     );
   }
