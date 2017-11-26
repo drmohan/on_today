@@ -1,19 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import 'semantic-ui-css/semantic.min.css';
+
 import App from './App';
 
 import registerServiceWorker from './registerServiceWorker';
 
-const today = new Date();
-const day = today.getDate();
-const month = today.getMonth()+1;
-const year = today.getFullYear();
+let today = new Date();
+let day = today.getDate();
+let month = today.getMonth()+1;
+
 
 const root = document.getElementById('root')
 ReactDOM.render(<App 
 					day={day}
-					month={month}
-					year={year} />, root);
+					month={month} />, root);
 
 registerServiceWorker();

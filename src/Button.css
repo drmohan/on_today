@@ -1,0 +1,9 @@
+.control {
+	display: inline !important;
+	cursor: pointer !important;
+}
+
+.date_controls {
+	vertical-align: unset !important;
+	margin: 0px 10px !important;
+}

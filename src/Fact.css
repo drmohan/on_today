@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+.date_header_wrapper {
+	margin-top: 5px;
+}
+
+.date_header {
+	display: inline;
+	font-family: Futura, "Trebuchet MS", Arial, sans-serif !important;
+	font-weight: lighter !important;
+}
+
+.fact_text {
+	font-family: 'Inconsolata', monospace;
+	font-size: 1.25em;
+	margin: 15px 0px;
+}
