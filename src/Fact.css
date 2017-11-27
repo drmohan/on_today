@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
 
 .date_header_wrapper {
-	margin-top: 5px;
+	margin-top: 20px;
 }
 
 .date_header {
@@ -13,5 +13,37 @@
 .fact_text {
 	font-family: 'Inconsolata', monospace;
 	font-size: 1.25em;
-	margin: 15px 0px;
+	margin: 15px 10%;
 }
+
+#fact_text {
+  -vendor-animation-duration: 3s;
+  -vendor-animation-delay: 2s;
+  /*-vendor-animation-iteration-count: infinite;*/
+}
+
+.bottom_controls {
+	position: fixed;
+	width: 30%;
+	left: 35%;
+	top: 60%;
+}
+
+@media screen and (min-width: 320px) {
+	.bottom_controls {
+		position: fixed;
+		width: 30%;
+		left: 35%;
+		top: 55%;
+	}
+}
+
+@media screen and (min-width: 800px) {
+	.bottom_controls {
+		position: fixed;
+		width: 30%;
+		left: 35%;
+		top: 60%;
+	}
+}
+

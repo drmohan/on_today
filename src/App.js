@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Fact from './Fact';
 import './App.css';
-import { Segment, Icon, Grid } from 'semantic-ui-react'
+import '../node_modules/animate.css/animate.min.css';
+
+import { Icon, Grid } from 'semantic-ui-react'
 
 const propTypes = {
   day: PropTypes.number.isRequired,
@@ -21,7 +23,7 @@ class App extends Component {
     return (
       <div className="app">
         <Grid>
-          <Grid.Row centered columns={3}>
+          <Grid.Row centered columns={1}>
             <Grid.Column textAlign='center'>
               <Icon name='calendar' size='huge' />
               <Fact 

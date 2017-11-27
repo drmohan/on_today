@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Fact.css';
 import Button from './Button';
-import { Icon, Header } from 'semantic-ui-react'
+import { Header } from 'semantic-ui-react'
 
 
 import $ from 'jquery';
@@ -22,6 +22,10 @@ class Fact extends Component {
     this.getFactForRandomDay = this.getFactForRandomDay.bind(this);
     this.getFactForNextDay = this.getFactForNextDay.bind(this);
     this.getFactForPrevDay = this.getFactForPrevDay.bind(this);
+
+    this.fetchPageId = this.fetchPageId.bind(this);
+    this.getProperNouns = this.getProperNouns.bind(this);
+    this.linkToWiki = this.linkToWiki.bind(this);
 
     this.state = {fact_source: ""};
   } 
@@ -100,10 +104,20 @@ class Fact extends Component {
 
   updateFactText () {
     const fact = this.state.fact_source
+    let _ = this
 
     $(function() {
       $.get(fact, function(data) {
-        $('#fact_text').text(data);
+
+        let nouns = _.getProperNouns(data)
+        let keys = Object.keys(nouns)
+        for (let i = 0; i < keys.length; i++){
+          let titles = nouns[keys[i]]
+          // let request = "https://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
+          _.fetchPageId(titles)
+        }
+
+        $('#fact_text').html(data);
         let text = data.split(' ')
         let month = text[0]
         let day = text[1]
@@ -117,7 +131,6 @@ class Fact extends Component {
 
   getFactForToday () {
     this.fetchFactSource('today')
-
   }
 
   getFactForRandomDay () {
@@ -131,6 +144,89 @@ class Fact extends Component {
   getFactForPrevDay () {
     this.fetchFactSource('previous')
   }
+
+  getProperNouns (data) {
+
+    let text = data.split(" ");
+    let res = {};
+    let aux = null;
+    for (let i = 2; i < text.length; i++) { 
+
+      if (!parseInt(text[i]) && text[i].charAt(0) === text[i].charAt(0).toUpperCase()) {
+        if (aux == null ) {
+          aux = []
+        }
+
+        let stripPunc = text[i].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        aux.push(stripPunc)
+      } else {
+        if (aux != null && aux.length > 0) {
+          res[aux[0]] = aux;
+        }
+        aux = null
+      }
+    }  
+    if (aux != null && aux.length > 0){
+      res[aux[0]] = aux
+    }
+
+    return res
+  }
+
+  linkToWiki ( startTerm, url ) {
+
+    let i = 0;
+    let data = $('#fact_text').html()
+    let nouns = this.getProperNouns(data)
+    let keys = Object.keys(nouns)
+    let text = [];
+    let start = null;
+    let end = -1;
+
+    let words = data.split(" ")
+    while (i < words.length) {
+      if (words[i].includes(startTerm)) {
+        start = '<a href=' + url + '>'
+        end = i + nouns[startTerm].length
+      } 
+
+      if (start) {
+        text.push(start)
+        start = null
+      }
+
+      text.push(words[i])
+
+      if (i == end-1) {
+        text.push("</a>")
+      }
+      i += 1
+    }
+
+    let html = text.join(' ')
+    $('#fact_text').html(html)
+
+  }
+
+  fetchPageId (nouns) {
+
+    let titles = nouns.join("%20")
+    let request = "https://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
+    const remoteUrlWithOrigin = request
+    let _ = this
+
+    $.ajax( {
+        url: remoteUrlWithOrigin,
+        dataType: 'jsonp',
+        type: 'GET',
+        success: function(data) {
+           let page_id = Object.keys(data["query"]["pages"])[0]
+           let url = "https://en.wikipedia.org/?curid="+page_id
+           _.linkToWiki(nouns[0], url)
+        }
+    });
+  }
+
 
   render() {
 
@@ -155,7 +251,7 @@ class Fact extends Component {
           />
         </div>
         <div id="fact_text" className="fact_text"></div>
-        <div>
+        <div className="bottom_controls">
           <Button
             on_click={this.getFactForToday}
             button_type="refresh"
