@@ -113,7 +113,6 @@ class Fact extends Component {
         let keys = Object.keys(nouns)
         for (let i = 0; i < keys.length; i++){
           let titles = nouns[keys[i]]
-          // let request = "https://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
           _.fetchPageId(titles)
         }
 

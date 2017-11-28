@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <div className="app">
         <Grid>
-          <Grid.Row centered columns={1}>
+          <Grid.Row centered columns={2}>
             <Grid.Column textAlign='center'>
               <Icon name='calendar' size='huge' />
               <Fact 
