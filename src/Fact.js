@@ -7,6 +7,7 @@ import { Header } from 'semantic-ui-react'
 
 import $ from 'jquery';
 
+
 const propTypes = {
   day: PropTypes.number.isRequired,
   month: PropTypes.number.isRequired, 
@@ -71,7 +72,7 @@ class Fact extends Component {
       let day = parseInt(text[1]) + 1
 
       this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
-          this.updateFactText(day);
+          this.updateFactText('next');
       })
     } else if (day === 'previous') {
 
@@ -96,7 +97,7 @@ class Fact extends Component {
       let day = parseInt(text[1]) - 1
 
       this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
-          this.updateFactText(day);
+          this.updateFactText('prev');
       })
     }
   }
@@ -124,12 +125,20 @@ class Fact extends Component {
         dataType: 'jsonp',
         type: 'GET',
         success: function(data) {
-          let animateStart = "slideOutLeft";
-          let animateEnd = "slideInRight";
-
+          let animateStart = "fadeOutLeft";
+          let animateEnd = "fadeInRight";
           if ( type === 'next' ) {
-            animateStart = 'slideOutLeft'
-            animateEnd = 'slideInRight'
+            animateStart = 'fadeOutLeft faster'
+            animateEnd = 'fadeInRight faster'
+          } else if ( type === 'prev' ) {
+            animateStart = 'fadeOutRight faster'
+            animateEnd = 'fadeInLeft faster'
+          } else if ( type === 'today' ) {
+            animateStart = 'flipOutX'
+            animateEnd = 'flipInX'
+          } else if ( type === 'random' ) {
+            animateStart = 'bounceOut'
+            animateEnd = 'bounceIn'
           }
 
           $('#fact_text').animateCss(animateStart, function () {
@@ -155,40 +164,6 @@ class Fact extends Component {
 
         }
     });
-
-    // $(function() {
-    //   $.get(fact, function(data) {
-
-    //     let animateStart = "slideOutLeft";
-    //     let animateEnd = "slideInRight";
-
-    //     if ( type === 'next' ) {
-    //       animateStart = 'slideOutLeft'
-    //       animateEnd = 'slideInRight'
-    //     }
-
-    //     $('#fact_text').animateCss(animateStart, function () {
-    //       $('#fact_text').html(data);
-
-    //       let nouns = _.getProperNouns(data)
-    //       let keys = Object.keys(nouns)
-    //       for (let i = 0; i < keys.length; i++){
-    //         let titles = nouns[keys[i]]
-    //         _.fetchPageId(titles)
-    //       }
-    //       $('#fact_text').animateCss(animateEnd)
-    //     });
-
-
-    //     let text = data.split(' ')
-    //     let month = text[0]
-    //     let day = text[1]
-
-    //     $('#curr_month').text(month)
-    //     $('#curr_day').text(day) 
-
-    //   });
-    // });
   }
 
   getFactForToday () {
@@ -214,7 +189,7 @@ class Fact extends Component {
     let aux = null;
     for (let i = 2; i < text.length; i++) { 
 
-      if (!parseInt(text[i]) && text[i].charAt(0) === text[i].charAt(0).toUpperCase()) {
+      if (text[i].charAt(0).match(/[a-zA-Z]/i) != null && text[i].charAt(0) === text[i].charAt(0).toUpperCase()) {
         if (aux == null ) {
           aux = []
         }
@@ -247,8 +222,11 @@ class Fact extends Component {
 
     let words = data.split(" ")
     while (i < words.length) {
+      console.log(words[i])
+      console.log(startTerm)
       if (nouns[startTerm] && words[i].includes(startTerm)) {
-        start = '<a href=' + url + '>'
+        console.log('MATCHED')
+        start = '<a href=' + url + ' target="_blank">'
         end = i + nouns[startTerm].length
       } 
 
@@ -282,9 +260,11 @@ class Fact extends Component {
         dataType: 'jsonp',
         type: 'GET',
         success: function(data) {
-           let page_id = Object.keys(data["query"]["pages"])[0]
-           let url = "https://en.wikipedia.org/?curid="+page_id
-           _.linkToWiki(nouns[0], url)
+          let page_id = Object.keys(data["query"]["pages"])[0]
+          let url = "https://en.wikipedia.org/?curid="+page_id
+          if (page_id !== -1) {
+            _.linkToWiki(nouns[0], url)
+          }
         }
     });
   }
@@ -301,10 +281,16 @@ class Fact extends Component {
           <Button
             on_click={this.getFactForPrevDay}
             button_type="angle left"
-            classes="date_controls"
+            classes="date_controls button_visibility_on"
           />
           <Header className="date_header" id="curr_month" as='h2'>{months[this.props.month-1]}</Header>&nbsp;
           <Header className="date_header" id="curr_day" as='h2'>{this.props.day}</Header>
+          <div className="newLine"></div>
+          <Button
+            on_click={this.getFactForPrevDay}
+            button_type="angle left"
+            classes="date_controls button_visibility_off"
+          />
           <Button
             on_click={this.getFactForNextDay}
             button_type="angle right"
