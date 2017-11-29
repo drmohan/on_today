@@ -41,11 +41,11 @@ class Fact extends Component {
 
   fetchFactSource( day ) {
     if (day === 'today') {
-      this.setState({fact_source : "http://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'random') {
-      this.setState({fact_source : "http://numbersapi.com/random/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/random/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'next') {
@@ -70,7 +70,7 @@ class Fact extends Component {
       let month = months_to_int[text[0]]
       let day = parseInt(text[1]) + 1
 
-      this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + month + "/" + day + "/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'previous') {
@@ -95,7 +95,7 @@ class Fact extends Component {
       let month = months_to_int[text[0]]
       let day = parseInt(text[1]) - 1
 
-      this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + month + "/" + day + "/date"}, () => {
           this.updateFactText();
       })
     }
