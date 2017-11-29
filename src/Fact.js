@@ -22,6 +22,8 @@ class Fact extends Component {
     this.getFactForRandomDay = this.getFactForRandomDay.bind(this);
     this.getFactForNextDay = this.getFactForNextDay.bind(this);
     this.getFactForPrevDay = this.getFactForPrevDay.bind(this);
+    this.animate = this.animate.bind(this);
+
 
     this.fetchPageId = this.fetchPageId.bind(this);
     this.getProperNouns = this.getProperNouns.bind(this);
@@ -41,11 +43,11 @@ class Fact extends Component {
 
   fetchFactSource( day ) {
     if (day === 'today') {
-      this.setState({fact_source : "http://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'random') {
-      this.setState({fact_source : "http://numbersapi.com/random/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/random/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'next') {
@@ -70,7 +72,7 @@ class Fact extends Component {
       let month = months_to_int[text[0]]
       let day = parseInt(text[1]) + 1
 
-      this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + month + "/" + day + "/date"}, () => {
           this.updateFactText();
       })
     } else if (day === 'previous') {
@@ -95,7 +97,7 @@ class Fact extends Component {
       let month = months_to_int[text[0]]
       let day = parseInt(text[1]) - 1
 
-      this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
+      this.setState({fact_source : "https://numbersapi.com/" + month + "/" + day + "/date"}, () => {
           this.updateFactText();
       })
     }
@@ -116,13 +118,27 @@ class Fact extends Component {
           _.fetchPageId(titles)
         }
 
+        debugger;
+        $('#fact_text').removeClass('slideInRight');
+        $('#fact_text').addClass('slideOutLeft')
+
+
         $('#fact_text').html(data);
+
+        $('#fact_text').removeClass('slideOutLeft');
+        $('#fact_text').addClass('slideInRight');
+
         let text = data.split(' ')
         let month = text[0]
         let day = text[1]
 
         $('#curr_month').text(month)
         $('#curr_day').text(day) 
+
+        // _.animate()
+        $('#fact_text').removeClass('slideInRight');
+        $('#fact_text').addClass('slideInRight');
+
 
       });
     });
@@ -226,6 +242,10 @@ class Fact extends Component {
     });
   }
 
+  animate () {
+    // debugger;
+    // $('#fact_text').addClass('slideInRight');
+  }
 
   render() {
 
@@ -249,7 +269,7 @@ class Fact extends Component {
             classes="date_controls"
           />
         </div>
-        <div id="fact_text" className="fact_text"></div>
+        <div id="fact_text" className="fact_text animated"></div>
         <div className="bottom_controls">
           <Button
             on_click={this.getFactForToday}

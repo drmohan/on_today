@@ -13,7 +13,7 @@
 .fact_text {
 	font-family: 'Inconsolata', monospace;
 	font-size: 1.25em;
-	margin: 15px 10%;
+	margin: 15px 0px;
 }
 
 #fact_text {
@@ -34,7 +34,7 @@
 		position: fixed;
 		width: 30%;
 		left: 35%;
-		top: 55%;
+		top: 65%;
 	}
 }
 
