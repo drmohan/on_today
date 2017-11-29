@@ -116,13 +116,27 @@ class Fact extends Component {
           _.fetchPageId(titles)
         }
 
+        debugger;
+        $('#fact_text').removeClass('slideInRight');
+        $('#fact_text').addClass('slideOutLeft')
+
+
         $('#fact_text').html(data);
+
+        $('#fact_text').removeClass('slideOutLeft');
+        $('#fact_text').addClass('slideInRight');
+
         let text = data.split(' ')
         let month = text[0]
         let day = text[1]
 
         $('#curr_month').text(month)
         $('#curr_day').text(day) 
+
+        // _.animate()
+        $('#fact_text').removeClass('slideInRight');
+        $('#fact_text').addClass('slideInRight');
+
 
       });
     });
@@ -184,7 +198,7 @@ class Fact extends Component {
 
     let words = data.split(" ")
     while (i < words.length) {
-      if (words[i].includes(startTerm)) {
+      if (nouns[startTerm] && words[i].includes(startTerm)) {
         start = '<a href=' + url + '>'
         end = i + nouns[startTerm].length
       } 
@@ -210,7 +224,7 @@ class Fact extends Component {
   fetchPageId (nouns) {
 
     let titles = nouns.join("%20")
-    let request = "https://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
+    let request = "http://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
     const remoteUrlWithOrigin = request
     let _ = this
 
@@ -225,7 +239,6 @@ class Fact extends Component {
         }
     });
   }
-
 
   render() {
 
@@ -249,7 +262,7 @@ class Fact extends Component {
             classes="date_controls"
           />
         </div>
-        <div id="fact_text" className="fact_text"></div>
+        <div id="fact_text" className="fact_text animated"></div>
         <div className="bottom_controls">
           <Button
             on_click={this.getFactForToday}
