@@ -17,9 +17,9 @@
 }
 
 #fact_text {
-  -vendor-animation-duration: 3s;
-  -vendor-animation-delay: 2s;
-  /*-vendor-animation-iteration-count: infinite;*/
+	animation-duration: 500ms !important;
+	/*-vendor-animation-delay: 2s;*/
+	/*-vendor-animation-iteration-count: infinite;*/
 }
 
 .bottom_controls {

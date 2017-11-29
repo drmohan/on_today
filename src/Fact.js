@@ -42,11 +42,11 @@ class Fact extends Component {
   fetchFactSource( day ) {
     if (day === 'today') {
       this.setState({fact_source : "http://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
-          this.updateFactText();
+          this.updateFactText(day);
       })
     } else if (day === 'random') {
       this.setState({fact_source : "http://numbersapi.com/random/date"}, () => {
-          this.updateFactText();
+          this.updateFactText(day);
       })
     } else if (day === 'next') {
 
@@ -71,7 +71,7 @@ class Fact extends Component {
       let day = parseInt(text[1]) + 1
 
       this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
-          this.updateFactText();
+          this.updateFactText(day);
       })
     } else if (day === 'previous') {
 
@@ -96,50 +96,99 @@ class Fact extends Component {
       let day = parseInt(text[1]) - 1
 
       this.setState({fact_source : "http://numbersapi.com/" + month + "/" + day + "/date"}, () => {
-          this.updateFactText();
+          this.updateFactText(day);
       })
     }
   }
 
 
-  updateFactText () {
+  updateFactText ( type ) {
     const fact = this.state.fact_source
     let _ = this
 
-    $(function() {
-      $.get(fact, function(data) {
-
-        let nouns = _.getProperNouns(data)
-        let keys = Object.keys(nouns)
-        for (let i = 0; i < keys.length; i++){
-          let titles = nouns[keys[i]]
-          _.fetchPageId(titles)
+    $.fn.extend({
+    animateCss: function (animationName, callback) {
+        var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+        this.addClass('animated ' + animationName).one(animationEnd, function() {
+            $(this).removeClass('animated ' + animationName);
+            if (callback) {
+              callback();
+            }
+          });
+          return this;
         }
-
-        debugger;
-        $('#fact_text').removeClass('slideInRight');
-        $('#fact_text').addClass('slideOutLeft')
-
-
-        $('#fact_text').html(data);
-
-        $('#fact_text').removeClass('slideOutLeft');
-        $('#fact_text').addClass('slideInRight');
-
-        let text = data.split(' ')
-        let month = text[0]
-        let day = text[1]
-
-        $('#curr_month').text(month)
-        $('#curr_day').text(day) 
-
-        // _.animate()
-        $('#fact_text').removeClass('slideInRight');
-        $('#fact_text').addClass('slideInRight');
-
-
-      });
     });
+
+    $.ajax( {
+        url: fact,
+        dataType: 'jsonp',
+        type: 'GET',
+        success: function(data) {
+          let animateStart = "slideOutLeft";
+          let animateEnd = "slideInRight";
+
+          if ( type === 'next' ) {
+            animateStart = 'slideOutLeft'
+            animateEnd = 'slideInRight'
+          }
+
+          $('#fact_text').animateCss(animateStart, function () {
+            $('#fact_text').html(data);
+
+            let nouns = _.getProperNouns(data)
+            let keys = Object.keys(nouns)
+            for (let i = 0; i < keys.length; i++){
+              let titles = nouns[keys[i]]
+              _.fetchPageId(titles)
+            }
+            $('#fact_text').animateCss(animateEnd)
+          });
+
+
+          let text = data.split(' ')
+          let month = text[0]
+          let day = text[1]
+
+          $('#curr_month').text(month)
+          $('#curr_day').text(day) 
+
+
+        }
+    });
+
+    // $(function() {
+    //   $.get(fact, function(data) {
+
+    //     let animateStart = "slideOutLeft";
+    //     let animateEnd = "slideInRight";
+
+    //     if ( type === 'next' ) {
+    //       animateStart = 'slideOutLeft'
+    //       animateEnd = 'slideInRight'
+    //     }
+
+    //     $('#fact_text').animateCss(animateStart, function () {
+    //       $('#fact_text').html(data);
+
+    //       let nouns = _.getProperNouns(data)
+    //       let keys = Object.keys(nouns)
+    //       for (let i = 0; i < keys.length; i++){
+    //         let titles = nouns[keys[i]]
+    //         _.fetchPageId(titles)
+    //       }
+    //       $('#fact_text').animateCss(animateEnd)
+    //     });
+
+
+    //     let text = data.split(' ')
+    //     let month = text[0]
+    //     let day = text[1]
+
+    //     $('#curr_month').text(month)
+    //     $('#curr_day').text(day) 
+
+    //   });
+    // });
   }
 
   getFactForToday () {
@@ -222,7 +271,7 @@ class Fact extends Component {
   }
 
   fetchPageId (nouns) {
-
+    console.log('fetchPageId')
     let titles = nouns.join("%20")
     let request = "http://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
     const remoteUrlWithOrigin = request
@@ -262,7 +311,7 @@ class Fact extends Component {
             classes="date_controls"
           />
         </div>
-        <div id="fact_text" className="fact_text animated"></div>
+        <div id="fact_text" className="fact_text"></div>
         <div className="bottom_controls">
           <Button
             on_click={this.getFactForToday}
