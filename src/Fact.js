@@ -13,6 +13,8 @@ const propTypes = {
   month: PropTypes.number.isRequired, 
 };
 
+// Contains all the logic for a fact and its 
+// corresponding actions
 class Fact extends Component {
 
   constructor(props) {
@@ -40,6 +42,8 @@ class Fact extends Component {
     this.getFactForToday()
   }
 
+  // stores fact's request url in state based on the kind of fact that
+  // needs to be retrieved 
   fetchFactSource( day ) {
     if (day === 'today') {
       this.setState({fact_source : "http://numbersapi.com/" + this.props.month + "/" + this.props.day + "/date"}, () => {
@@ -103,6 +107,7 @@ class Fact extends Component {
   }
 
 
+  // updates the div with text from the Numbers API
   updateFactText ( type ) {
     const fact = this.state.fact_source
     let _ = this
@@ -120,6 +125,7 @@ class Fact extends Component {
         }
     });
 
+    // set animation based on kind of action
     $.ajax( {
         url: fact,
         dataType: 'jsonp',
@@ -144,6 +150,7 @@ class Fact extends Component {
           $('#fact_text').animateCss(animateStart, function () {
             $('#fact_text').html(data);
 
+            // replace parts of text with hyperlinks to Wikipedia
             let nouns = _.getProperNouns(data)
             let keys = Object.keys(nouns)
             for (let i = 0; i < keys.length; i++){
@@ -154,6 +161,7 @@ class Fact extends Component {
           });
 
 
+          // update date header to reflect user actions
           let text = data.split(' ')
           let month = text[0]
           let day = text[1]
@@ -165,6 +173,8 @@ class Fact extends Component {
         }
     });
   }
+
+  // get different kinds of fact based on users' actions
 
   getFactForToday () {
     this.fetchFactSource('today')
@@ -182,6 +192,9 @@ class Fact extends Component {
     this.fetchFactSource('previous')
   }
 
+  // identify proper nouns in text and store in hashmap,
+  // key being the first word in the phrase and value being an 
+  // array of all the words in the phrase 
   getProperNouns (data) {
 
     let text = data.split(" ");
@@ -194,7 +207,7 @@ class Fact extends Component {
           aux = []
         }
 
-        let stripPunc = text[i].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        let stripPunc = text[i].replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,"");
         aux.push(stripPunc)
       } else {
         if (aux != null && aux.length > 0) {
@@ -210,22 +223,20 @@ class Fact extends Component {
     return res
   }
 
+  // constructs html based on url and the nouns
+  // replaces text with new html string
   linkToWiki ( startTerm, url ) {
 
     let i = 0;
     let data = $('#fact_text').html()
     let nouns = this.getProperNouns(data)
-    let keys = Object.keys(nouns)
     let text = [];
     let start = null;
     let end = -1;
 
     let words = data.split(" ")
     while (i < words.length) {
-      console.log(words[i])
-      console.log(startTerm)
       if (nouns[startTerm] && words[i].includes(startTerm)) {
-        console.log('MATCHED')
         start = '<a href=' + url + ' target="_blank">'
         end = i + nouns[startTerm].length
       } 
@@ -237,7 +248,7 @@ class Fact extends Component {
 
       text.push(words[i])
 
-      if (i == end-1) {
+      if (i === end-1) {
         text.push("</a>")
       }
       i += 1
@@ -248,8 +259,9 @@ class Fact extends Component {
 
   }
 
+  // fetches page id based on request string constructed from array 
+  // of proper nouns
   fetchPageId (nouns) {
-    console.log('fetchPageId')
     let titles = nouns.join("%20")
     let request = "http://en.wikipedia.org/w/api.php?action=query&titles="+titles+"&prop=info&format=json"
     const remoteUrlWithOrigin = request
@@ -262,7 +274,7 @@ class Fact extends Component {
         success: function(data) {
           let page_id = Object.keys(data["query"]["pages"])[0]
           let url = "https://en.wikipedia.org/?curid="+page_id
-          if (page_id !== -1) {
+          if (page_id !== '-1') {
             _.linkToWiki(nouns[0], url)
           }
         }

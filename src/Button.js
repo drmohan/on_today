@@ -9,6 +9,7 @@ const propTypes = {
   classes: PropTypes.string,
 };
 
+// Contains logic for button controls
 class Button extends Component {
 
   render() {
